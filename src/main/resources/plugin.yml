@@ -1,4 +1,4 @@
-name: VaultEmpty
+name: VaultSlim
 version: 1.0
 description: Replacement for Vault with build-in placeholder and removed unused stuff
 
