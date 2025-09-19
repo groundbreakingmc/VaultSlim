@@ -16,12 +16,8 @@ import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class EconomyHook {
-
-    private static final Pattern BALANCE_DECIMAL_POINTS_PATTERN = Pattern.compile("balance_(?<points>\\d+)dp");
 
     private final char decimalSeparator;
     private final NumberFormat commasFormat;
@@ -58,20 +54,18 @@ public class EconomyHook {
 
         final double balance = this.getBalance(player);
 
-        if (params.startsWith("balance_")) {
-            final Matcher matcher = BALANCE_DECIMAL_POINTS_PATTERN.matcher(params);
-            if (matcher.find()) {
-                final Integer points = Ints.tryParse(matcher.group("points"));
-                if (points == null) return matcher.group("points") + " is not a valid number";
-                return this.setDecimalPoints(balance, points);
-            }
+        if (Character.isDigit(params.charAt(8)) && params.endsWith("dp")) {
+            final String decimalPlaces = params.substring(8, params.length() - 2);
+            final Integer points = Ints.tryParse(decimalPlaces);
+            if (points == null) return "'" + decimalPlaces + "' is not a valid number";
+            return this.setDecimalPoints(balance, points);
         }
 
         return switch (params) {
             case "balance" -> this.setDecimalPoints(balance, Math.max(2, this.economy.fractionalDigits()));
             case "balance_fixed" -> String.valueOf(Math.round(balance));
-            case "balance_formatted" -> formatBalance((long) balance);
-            case "balance_commas" -> commasFormat.format(balance);
+            case "balance_formatted" -> this.formatBalance((long) balance);
+            case "balance_commas" -> this.commasFormat.format(balance);
             default -> null;
         };
     }
