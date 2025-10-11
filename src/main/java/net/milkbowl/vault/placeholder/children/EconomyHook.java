@@ -19,8 +19,10 @@ import java.util.Objects;
 
 public class EconomyHook {
 
-    private final char decimalSeparator;
-    private final NumberFormat commasFormat;
+    private final VaultPlaceholder parent;
+
+    private char decimalSeparator;
+    private NumberFormat commasFormat;
     private final Map<Integer, NumberFormat> decimalFormatsCache;
 
     private final SuffixEntry[] suffixes;
@@ -28,23 +30,9 @@ public class EconomyHook {
     private final Economy economy;
 
     public EconomyHook(VaultPlaceholder expansion) {
-        final ConfigurationSection formattingSection = expansion.getConfigSection("formatting");
-        Objects.requireNonNull(formattingSection);
-
-        final boolean usNumberFormat = formattingSection.getBoolean("us-number-format");
-        this.decimalSeparator = usNumberFormat ? '.' : ',';
-        this.commasFormat = NumberFormat.getInstance(usNumberFormat ? Locale.ENGLISH : Locale.GERMAN);
-
+        this.parent = expansion;
         this.decimalFormatsCache = new Object2ObjectOpenHashMap<>();
-
-        this.suffixes = new SuffixEntry[]{
-                new SuffixEntry(1_000_000_000_000_000L, formattingSection.getString("quadrillions", "Q")),
-                new SuffixEntry(1_000_000_000_000L, formattingSection.getString("trillions", "T")),
-                new SuffixEntry(1_000_000_000L, formattingSection.getString("billions", "B")),
-                new SuffixEntry(1_000_000L, formattingSection.getString("millions", "M")),
-                new SuffixEntry(1_000L, formattingSection.getString("thousands", "K")),
-        };
-
+        this.suffixes = new SuffixEntry[5];
         this.economy = Bukkit.getServicesManager().getRegistration(Economy.class).getProvider();
     }
 
@@ -117,5 +105,20 @@ public class EconomyHook {
         }
 
         return this.suffixes[0];
+    }
+
+    public void setup() {
+        final ConfigurationSection formattingSection = this.parent.getConfigSection("formatting");
+        Objects.requireNonNull(formattingSection);
+
+        final boolean usNumberFormat = formattingSection.getBoolean("us-number-format");
+        this.decimalSeparator = usNumberFormat ? '.' : ',';
+        this.commasFormat = NumberFormat.getInstance(usNumberFormat ? Locale.ENGLISH : Locale.GERMAN);
+
+        this.suffixes[0] = new SuffixEntry(1_000_000_000_000_000L, formattingSection.getString("quadrillions", "Q"));
+        this.suffixes[1] = new SuffixEntry(1_000_000_000_000L, formattingSection.getString("trillions", "T"));
+        this.suffixes[2] = new SuffixEntry(1_000_000_000L, formattingSection.getString("billions", "B"));
+        this.suffixes[3] = new SuffixEntry(1_000_000L, formattingSection.getString("millions", "M"));
+        this.suffixes[4] = new SuffixEntry(1_000L, formattingSection.getString("thousands", "K"));
     }
 }

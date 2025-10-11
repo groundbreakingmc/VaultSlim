@@ -3,6 +3,7 @@ package net.milkbowl.vault.placeholder;
 import com.google.common.collect.ImmutableMap;
 import me.clip.placeholderapi.expansion.Configurable;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import me.clip.placeholderapi.expansion.Taskable;
 import net.milkbowl.vault.placeholder.children.EconomyHook;
 import net.milkbowl.vault.placeholder.children.PermissionHook;
 import org.bukkit.OfflinePlayer;
@@ -11,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.Map;
 
-public class VaultPlaceholder extends PlaceholderExpansion implements Configurable {
+public class VaultPlaceholder extends PlaceholderExpansion implements Configurable, Taskable {
 
     private final EconomyHook economyHook;
     private final PermissionHook permissionHook;
@@ -46,6 +47,16 @@ public class VaultPlaceholder extends PlaceholderExpansion implements Configurab
                 .put("formatting.trillions", "T")
                 .put("formatting.quadrillions", "Q")
                 .build();
+    }
+
+    @Override
+    public void start() {
+        this.economyHook.setup();
+    }
+
+    @Override
+    public void stop() {
+
     }
 
     @Nullable
