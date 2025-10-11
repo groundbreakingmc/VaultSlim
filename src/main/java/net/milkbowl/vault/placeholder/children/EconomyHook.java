@@ -93,24 +93,29 @@ public class EconomyHook {
         if (balance < 0) return "-" + this.formatBalance(-balance);
         if (balance < 1000) return Long.toString(balance);
 
-        long divideBy = 1;
-        String suffix = "";
+        final SuffixEntry suffixEntry = this.getSuffixEntry(balance);
 
-        for (final SuffixEntry entry : this.suffixes) {
-            if (balance >= entry.value()) {
-                divideBy = entry.value();
-                suffix = entry.suffix();
-                break;
-            }
-        }
-
-        final long truncated = balance / (divideBy / 10);
+        final long truncated = balance / (suffixEntry.value() / 10);
         final boolean hasDecimal = truncated < 100 && truncated % 10 != 0;
 
         if (hasDecimal) {
-            return (truncated / 10) + this.decimalSeparator + (truncated % 10) + suffix;
+            return (truncated / 10) + this.decimalSeparator + (truncated % 10) + suffixEntry.suffix();
         } else {
-            return (truncated / 10) + suffix;
+            return (truncated / 10) + suffixEntry.suffix();
         }
+    }
+
+    private SuffixEntry getSuffixEntry(long balance) {
+        if (balance < 1_000_000L) {
+            return this.suffixes[4];
+        } else if (balance < 1_000_000_000L) {
+            return this.suffixes[3];
+        } else if (balance < 1_000_000_000_000L) {
+            return this.suffixes[2];
+        } else if (balance < 1_000_000_000_000_000L) {
+            return this.suffixes[1];
+        }
+
+        return this.suffixes[0];
     }
 }
