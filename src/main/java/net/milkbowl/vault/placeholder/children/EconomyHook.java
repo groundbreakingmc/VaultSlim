@@ -54,7 +54,7 @@ public class EconomyHook {
 
         final double balance = this.getBalance(player);
 
-        if (Character.isDigit(params.charAt(8)) && params.endsWith("dp")) {
+        if (params.length() > 8 && Character.isDigit(params.charAt(8)) && params.endsWith("dp")) {
             final String decimalPlaces = params.substring(8, params.length() - 2);
             final Integer points = Ints.tryParse(decimalPlaces);
             if (points == null) return "'" + decimalPlaces + "' is not a valid number";
