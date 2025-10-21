@@ -27,7 +27,11 @@ public class Vault extends JavaPlugin {
         // than the registration task will run
         if (this.placeholder != null) {
             // runtime reload?
-            this.placeholder.unregister();
+            try {
+                this.placeholder.unregister();
+            } catch (Throwable ignored) {
+                // ignore if PlaceholderAPI is already disabled
+            }
         }
     }
 }
