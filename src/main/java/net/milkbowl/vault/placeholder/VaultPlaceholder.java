@@ -38,6 +38,11 @@ public class VaultPlaceholder extends PlaceholderExpansion implements Configurab
     }
 
     @Override
+    public boolean persist() {
+        return true;
+    }
+
+    @Override
     public Map<String, Object> getDefaults() {
         return ImmutableMap.<String, Object>builder()
                 .put("formatting.us-number-format", "false")
