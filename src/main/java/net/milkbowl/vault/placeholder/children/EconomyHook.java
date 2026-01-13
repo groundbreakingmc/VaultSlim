@@ -21,7 +21,7 @@ public class EconomyHook {
 
     private final VaultPlaceholder parent;
 
-    private char decimalSeparator;
+    private String decimalSeparator;
     private NumberFormat commasFormat;
     private final Map<Integer, NumberFormat> decimalFormatsCache;
 
@@ -112,7 +112,7 @@ public class EconomyHook {
         Objects.requireNonNull(formattingSection);
 
         final boolean usNumberFormat = formattingSection.getBoolean("us-number-format");
-        this.decimalSeparator = usNumberFormat ? '.' : ',';
+        this.decimalSeparator = usNumberFormat ? "." : ",";
         this.commasFormat = NumberFormat.getInstance(usNumberFormat ? Locale.ENGLISH : Locale.GERMAN);
 
         this.suffixes[0] = new SuffixEntry(1_000_000_000_000_000L, formattingSection.getString("quadrillions", "Q"));
