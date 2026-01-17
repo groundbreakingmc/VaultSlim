@@ -1,7 +1,8 @@
 package net.milkbowl.vault.placeholder.children;
 
 import com.google.common.primitives.Ints;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.models.SuffixEntry;
 import net.milkbowl.vault.placeholder.VaultPlaceholder;
@@ -13,7 +14,6 @@ import javax.annotation.Nullable;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 
 public class EconomyHook {
@@ -23,14 +23,14 @@ public class EconomyHook {
 
     private String decimalSeparator;
     private NumberFormat commasFormat;
-    private final Map<Integer, NumberFormat> decimalFormatsCache;
+    private final Int2ObjectMap<NumberFormat> decimalFormatsCache;
     private final SuffixEntry[] suffixes;
 
 
     public EconomyHook(VaultPlaceholder expansion, Economy economy) {
         this.parent = expansion;
         this.economy = economy;
-        this.decimalFormatsCache = new Object2ObjectOpenHashMap<>();
+        this.decimalFormatsCache = new Int2ObjectOpenHashMap<>();
         this.suffixes = new SuffixEntry[5];
     }
 
@@ -66,8 +66,8 @@ public class EconomyHook {
 
         return this.decimalFormatsCache.computeIfAbsent(points, key -> {
             final DecimalFormat format = new DecimalFormat();
-            format.setMaximumFractionDigits(key);
-            format.setMinimumFractionDigits(0);
+            format.setMaximumFractionDigits(key); // max
+            format.setMinimumFractionDigits(0); // min
             format.setGroupingUsed(false);
             return format;
         }).format(balance);
