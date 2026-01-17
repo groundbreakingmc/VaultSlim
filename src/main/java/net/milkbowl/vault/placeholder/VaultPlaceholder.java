@@ -4,6 +4,9 @@ import com.google.common.collect.ImmutableMap;
 import me.clip.placeholderapi.expansion.Configurable;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.clip.placeholderapi.expansion.Taskable;
+import net.milkbowl.vault.chat.Chat;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
 import net.milkbowl.vault.placeholder.children.EconomyHook;
 import net.milkbowl.vault.placeholder.children.PermissionHook;
 import org.bukkit.OfflinePlayer;
@@ -17,9 +20,9 @@ public class VaultPlaceholder extends PlaceholderExpansion implements Configurab
     private final EconomyHook economyHook;
     private final PermissionHook permissionHook;
 
-    public VaultPlaceholder() {
-        this.economyHook = new EconomyHook(this);
-        this.permissionHook = new PermissionHook();
+    public VaultPlaceholder(Economy economy, Permission permission, Chat chat) {
+        this.economyHook = economy != null ? new EconomyHook(this, economy) : null;
+        this.permissionHook = permission != null && chat != null ? new PermissionHook(permission, chat) : null;
     }
 
     @NotNull
@@ -56,7 +59,9 @@ public class VaultPlaceholder extends PlaceholderExpansion implements Configurab
 
     @Override
     public void start() {
-        this.economyHook.setup();
+        if (this.economyHook != null) {
+            this.economyHook.setup();
+        }
     }
 
     @Override
@@ -69,8 +74,10 @@ public class VaultPlaceholder extends PlaceholderExpansion implements Configurab
         if (player == null) {
             return "";
         } else if (params.startsWith("eco_")) {
+            if (this.economyHook == null) return "economy not found";
             return this.economyHook.onRequest(player, params.substring(4));
         } else {
+            if (this.permissionHook == null) return "economy not found";
             return this.permissionHook.onRequest(player, params);
         }
     }

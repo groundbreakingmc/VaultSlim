@@ -5,7 +5,6 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.models.SuffixEntry;
 import net.milkbowl.vault.placeholder.VaultPlaceholder;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
@@ -20,20 +19,19 @@ import java.util.Objects;
 public class EconomyHook {
 
     private final VaultPlaceholder parent;
+    private final Economy economy;
 
     private String decimalSeparator;
     private NumberFormat commasFormat;
     private final Map<Integer, NumberFormat> decimalFormatsCache;
-
     private final SuffixEntry[] suffixes;
 
-    private final Economy economy;
 
-    public EconomyHook(VaultPlaceholder expansion) {
+    public EconomyHook(VaultPlaceholder expansion, Economy economy) {
         this.parent = expansion;
+        this.economy = economy;
         this.decimalFormatsCache = new Object2ObjectOpenHashMap<>();
         this.suffixes = new SuffixEntry[5];
-        this.economy = Bukkit.getServicesManager().getRegistration(Economy.class).getProvider();
     }
 
     @Nullable
@@ -94,17 +92,8 @@ public class EconomyHook {
     }
 
     private SuffixEntry getSuffixEntry(long balance) {
-        if (balance < 1_000_000L) {
-            return this.suffixes[4];
-        } else if (balance < 1_000_000_000L) {
-            return this.suffixes[3];
-        } else if (balance < 1_000_000_000_000L) {
-            return this.suffixes[2];
-        } else if (balance < 1_000_000_000_000_000L) {
-            return this.suffixes[1];
-        }
-
-        return this.suffixes[0];
+        final int index = Math.min(4, (63 - Long.numberOfLeadingZeros(balance)) / 10);
+        return this.suffixes[index];
     }
 
     public void setup() {

@@ -4,7 +4,6 @@ import com.google.common.primitives.Ints;
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
@@ -15,9 +14,9 @@ public class PermissionHook {
     private final Permission permission;
     private final Chat chat;
 
-    public PermissionHook() {
-        this.permission = Bukkit.getServicesManager().getRegistration(Permission.class).getProvider();
-        this.chat = Bukkit.getServicesManager().getRegistration(Chat.class).getProvider();
+    public PermissionHook(Permission permission, Chat chat) {
+        this.permission = permission;
+        this.chat = chat;
     }
 
     @Nullable
