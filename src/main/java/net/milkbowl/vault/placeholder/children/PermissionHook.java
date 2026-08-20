@@ -30,14 +30,16 @@ public class PermissionHook {
             return this.getPlayerMeta(player, false);
         }
 
-        if (params.startsWith("rankprefix_")
-                || params.startsWith("groupprefix_")) {
-            return this.getGroupMeta(player, params, true);
+        if (params.startsWith("rankprefix_")) {
+            return this.getGroupMeta(player, params, 11, true);
+        } else if (params.startsWith("groupprefix_")) {
+            return this.getGroupMeta(player, params, 12, true);
         }
 
-        if (params.startsWith("ranksuffix_")
-                || params.startsWith("groupsuffix_")) {
-            return this.getGroupMeta(player, params, false);
+        if (params.startsWith("ranksuffix_")) {
+            return this.getGroupMeta(player, params, 11, false);
+        } else if (params.startsWith("groupsuffix_")) {
+            return this.getGroupMeta(player, params, 12, false);
         }
 
         if (params.startsWith("hasgroup_")) {
@@ -83,8 +85,7 @@ public class PermissionHook {
     }
 
     @NotNull
-    private String getGroupMeta(@NotNull OfflinePlayer player, String params, boolean isPrefix) {
-        final int numberStart = params.lastIndexOf('_') + 1;
+    private String getGroupMeta(@NotNull OfflinePlayer player, String params, int numberStart, boolean isPrefix) {
         final int index = NumberParser.parseUnsignedInt(params, numberStart, params.length());
         if (index <= 0) {
             return "Invalid number " + params.substring(numberStart);
