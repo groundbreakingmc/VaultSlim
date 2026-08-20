@@ -48,8 +48,8 @@ public class VaultPlaceholder extends PlaceholderExpansion implements Configurab
     @Override
     public Map<String, Object> getDefaults() {
         return ImmutableMap.<String, Object>builder()
-                .put("formatting.us-number-format", "false")
-                .put("formatting.thousands", "k")
+                .put("formatting.us-number-format", false)
+                .put("formatting.thousands", "K")
                 .put("formatting.millions", "M")
                 .put("formatting.billions", "B")
                 .put("formatting.trillions", "T")
