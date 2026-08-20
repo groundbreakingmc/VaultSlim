@@ -64,7 +64,7 @@ public class PermissionHook {
                 if (playerGroups.length == 0) yield "";
                 final StringBuilder groups = new StringBuilder();
                 for (final String group : playerGroups) {
-                    groups.append(group).append(',').append(' ');
+                    groups.append(this.capitalize(group)).append(',').append(' ');
                 }
                 groups.setLength(groups.length() - 2);
                 yield groups.toString();
@@ -87,7 +87,7 @@ public class PermissionHook {
     private String getGroupMeta(@NotNull OfflinePlayer player, String params, boolean isPrefix) {
         final String number = params.substring(params.lastIndexOf("_") + 1);
         final Integer index = Ints.tryParse(number);
-        if (index == null || index < 0) {
+        if (index == null || index <= 0) {
             return "Invalid number " + number;
         }
 
@@ -122,7 +122,7 @@ public class PermissionHook {
 
     @NotNull
     private String[] getPlayerGroups(@NotNull OfflinePlayer player) {
-        final String[] groups = permission.getPlayerGroups(null, player);
+        final String[] groups = this.permission.getPlayerGroups(null, player);
         return groups == null ? new String[0] : groups;
     }
 
