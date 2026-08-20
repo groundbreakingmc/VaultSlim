@@ -1,6 +1,5 @@
 package net.milkbowl.vault.placeholder;
 
-import com.google.common.collect.ImmutableMap;
 import me.clip.placeholderapi.expansion.Configurable;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.clip.placeholderapi.expansion.Taskable;
@@ -47,14 +46,14 @@ public class VaultPlaceholder extends PlaceholderExpansion implements Configurab
 
     @Override
     public Map<String, Object> getDefaults() {
-        return ImmutableMap.<String, Object>builder()
-                .put("formatting.us-number-format", false)
-                .put("formatting.thousands", "K")
-                .put("formatting.millions", "M")
-                .put("formatting.billions", "B")
-                .put("formatting.trillions", "T")
-                .put("formatting.quadrillions", "Q")
-                .build();
+        return Map.of(
+                "formatting.us-number-format", false,
+                "formatting.thousands", "K",
+                "formatting.millions", "M",
+                "formatting.billions", "B",
+                "formatting.trillions", "T",
+                "formatting.quadrillions", "Q"
+        );
     }
 
     @Override
