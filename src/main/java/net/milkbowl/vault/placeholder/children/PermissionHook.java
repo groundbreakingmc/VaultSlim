@@ -1,6 +1,5 @@
 package net.milkbowl.vault.placeholder.children;
 
-import com.google.common.primitives.Ints;
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
@@ -85,10 +84,10 @@ public class PermissionHook {
 
     @NotNull
     private String getGroupMeta(@NotNull OfflinePlayer player, String params, boolean isPrefix) {
-        final String number = params.substring(params.lastIndexOf("_") + 1);
-        final Integer index = Ints.tryParse(number);
-        if (index == null || index <= 0) {
-            return "Invalid number " + number;
+        final int numberStart = params.lastIndexOf('_') + 1;
+        final int index = NumberParser.parseUnsignedInt(params, numberStart, params.length());
+        if (index <= 0) {
+            return "Invalid number " + params.substring(numberStart);
         }
 
         final String[] groups = this.getPlayerGroups(player);

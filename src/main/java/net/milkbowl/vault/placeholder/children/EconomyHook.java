@@ -1,6 +1,5 @@
 package net.milkbowl.vault.placeholder.children;
 
-import com.google.common.primitives.Ints;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.milkbowl.vault.economy.Economy;
@@ -43,9 +42,11 @@ public class EconomyHook {
         final double balance = this.getBalance(player);
 
         if (params.length() > 8 && Character.isDigit(params.charAt(8)) && params.endsWith("dp")) {
-            final String decimalPlaces = params.substring(8, params.length() - 2);
-            final Integer points = Ints.tryParse(decimalPlaces);
-            if (points == null) return "'" + decimalPlaces + "' is not a valid number";
+            final int numberEnd = params.length() - 2;
+            final int points = NumberParser.parseUnsignedInt(params, 8, numberEnd);
+            if (points < 0) {
+                return "'" + params.substring(8, numberEnd) + "' is not a valid number";
+            }
             return this.setDecimalPoints(balance, points);
         }
 
