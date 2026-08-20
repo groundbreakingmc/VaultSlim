@@ -4,7 +4,6 @@ import com.google.common.primitives.Ints;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.models.SuffixEntry;
 import net.milkbowl.vault.placeholder.VaultPlaceholder;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
@@ -24,14 +23,17 @@ public class EconomyHook {
     private String decimalSeparator;
     private NumberFormat commasFormat;
     private final Int2ObjectMap<NumberFormat> decimalFormatsCache;
-    private final SuffixEntry[] suffixes;
 
+    private String thousandsSuffix;
+    private String millionsSuffix;
+    private String billionsSuffix;
+    private String trillionsSuffix;
+    private String quadrillionsSuffix;
 
     public EconomyHook(VaultPlaceholder expansion, Economy economy) {
         this.parent = expansion;
         this.economy = economy;
         this.decimalFormatsCache = new Int2ObjectOpenHashMap<>();
-        this.suffixes = new SuffixEntry[5];
     }
 
     @Nullable
@@ -79,21 +81,34 @@ public class EconomyHook {
         if (balance < 0) return "-" + this.formatBalance(-balance);
         if (balance < 1000) return Long.toString(balance);
 
-        final SuffixEntry suffixEntry = this.getSuffixEntry(balance);
+        final long divisor;
+        final String suffix;
 
-        final long truncated = balance / (suffixEntry.value() / 10);
+        if (balance >= 1_000_000_000_000_000L) {
+            divisor = 1_000_000_000_000_000L;
+            suffix = this.quadrillionsSuffix;
+        } else if (balance >= 1_000_000_000_000L) {
+            divisor = 1_000_000_000_000L;
+            suffix = this.trillionsSuffix;
+        } else if (balance >= 1_000_000_000L) {
+            divisor = 1_000_000_000L;
+            suffix = this.billionsSuffix;
+        } else if (balance >= 1_000_000L) {
+            divisor = 1_000_000L;
+            suffix = this.millionsSuffix;
+        } else {
+            divisor = 1_000L;
+            suffix = this.thousandsSuffix;
+        }
+
+        final long truncated = balance / (divisor / 10);
         final boolean hasDecimal = truncated < 100 && truncated % 10 != 0;
 
         if (hasDecimal) {
-            return (truncated / 10) + this.decimalSeparator + (truncated % 10) + suffixEntry.suffix();
+            return (truncated / 10) + this.decimalSeparator + (truncated % 10) + suffix;
         } else {
-            return (truncated / 10) + suffixEntry.suffix();
+            return (truncated / 10) + suffix;
         }
-    }
-
-    private SuffixEntry getSuffixEntry(long balance) {
-        final int index = Math.min(4, (63 - Long.numberOfLeadingZeros(balance)) / 10);
-        return this.suffixes[index];
     }
 
     public void setup() {
@@ -104,10 +119,10 @@ public class EconomyHook {
         this.decimalSeparator = usNumberFormat ? "." : ",";
         this.commasFormat = NumberFormat.getInstance(usNumberFormat ? Locale.ENGLISH : Locale.GERMAN);
 
-        this.suffixes[0] = new SuffixEntry(1_000_000_000_000_000L, formattingSection.getString("quadrillions", "Q"));
-        this.suffixes[1] = new SuffixEntry(1_000_000_000_000L, formattingSection.getString("trillions", "T"));
-        this.suffixes[2] = new SuffixEntry(1_000_000_000L, formattingSection.getString("billions", "B"));
-        this.suffixes[3] = new SuffixEntry(1_000_000L, formattingSection.getString("millions", "M"));
-        this.suffixes[4] = new SuffixEntry(1_000L, formattingSection.getString("thousands", "K"));
+        this.quadrillionsSuffix = formattingSection.getString("quadrillions", "Q");
+        this.trillionsSuffix = formattingSection.getString("trillions", "T");
+        this.billionsSuffix = formattingSection.getString("billions", "B");
+        this.millionsSuffix = formattingSection.getString("millions", "M");
+        this.thousandsSuffix = formattingSection.getString("thousands", "K");
     }
 }
