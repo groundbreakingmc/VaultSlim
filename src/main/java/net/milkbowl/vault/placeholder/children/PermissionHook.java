@@ -71,7 +71,7 @@ public class PermissionHook {
             }
             case "groupprefix", "rankprefix" -> this.getPrimaryGroupMeta(player, true);
             case "groupsuffix", "ranksuffix" -> this.getPrimaryGroupMeta(player, false);
-            default -> "";
+            default -> null;
         };
     }
 

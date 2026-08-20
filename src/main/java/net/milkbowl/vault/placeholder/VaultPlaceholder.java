@@ -77,7 +77,7 @@ public class VaultPlaceholder extends PlaceholderExpansion implements Configurab
             if (this.economyHook == null) return "economy not found";
             return this.economyHook.onRequest(player, params.substring(4));
         } else {
-            if (this.permissionHook == null) return "economy not found";
+            if (this.permissionHook == null) return "permission or chat not found";
             return this.permissionHook.onRequest(player, params);
         }
     }
